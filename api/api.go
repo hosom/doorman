@@ -2,7 +2,9 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/hosom/go-ttlmap"
@@ -31,7 +33,7 @@ func parseMessage(r *http.Request) (*message, error) {
 // API provides the HTTP handler for managing the doorman list
 type API struct {
 	blocklist *ttlmap.TTLMap
-	ttl time.Duration
+	ttl       time.Duration
 }
 
 // NewAPI creates an API handler
@@ -54,13 +56,12 @@ func (a *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (a *API) get(w http.ResponseWriter, r *http.Request) {
 
 	m := a.blocklist.GetAll()
-
-	indicators := []string
-	for indicator, value := range m {
-		indicators.append(indicator)
+	var indicators []string
+	for indicator := range m {
+		indicators = append(indicators, indicator.(string))
 	}
 
-	response := strings.Join(lines, "\n")
+	response := strings.Join(indicators, "\n")
 
 	fmt.Fprint(w, response)
 }
@@ -69,12 +70,12 @@ func (a *API) post(w http.ResponseWriter, r *http.Request) {
 	msg, _ := parseMessage(r)
 	if msg != nil {
 		// if the message parses properly, process it
-		if msg.indicator != nil {
-			ttl := a.ttl 
-			if msg.ttl != nil {
-				ttl = msg.ttl
+		if msg.indicator != "" {
+			ttl, err := time.ParseDuration(msg.ttl)
+			if err != nil {
+				ttl = a.ttl
 			}
-	
+
 			a.blocklist.AddWithTTL(msg.indicator, msg, ttl)
 		}
 	} else {
