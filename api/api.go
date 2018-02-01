@@ -62,7 +62,7 @@ func (a *API) get(w http.ResponseWriter, r *http.Request) {
 	for indicator := range m {
 		indicators = append(indicators, indicator.(string))
 	}
-
+	log.Printf("Found %d entries to return", len(indicators))
 	response := strings.Join(indicators, "\n")
 
 	fmt.Fprint(w, response)
@@ -80,6 +80,7 @@ func (a *API) post(w http.ResponseWriter, r *http.Request) {
 			}
 
 			a.blocklist.AddWithTTL(msg.indicator, msg, ttl)
+			fmt.Fprint(w, "OK")
 		}
 	} else {
 		http.Error(w, "", http.StatusBadRequest)
