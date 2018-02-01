@@ -11,7 +11,7 @@ import (
 func main() {
 	apiHandler := api.NewAPI(time.Hour * 1)
 	http.Handle("/blocklist", apiHandler)
-	if err := http.ListenAndServe(":80", nil); err != nil {
+	if err := http.ListenAndServe(":8000", nil); err != nil {
 		log.Fatal(err)
 	}
 }
