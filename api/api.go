@@ -72,6 +72,7 @@ func (a *API) post(w http.ResponseWriter, r *http.Request) {
 	log.Println("Processing request to add to blocklist.")
 	msg, _ := parseMessage(r)
 	if msg != nil {
+		log.Printf("Processing indicator: %s, using ttl: %s", msg.indicator, msg.ttl)
 		// if the message parses properly, process it
 		if msg.indicator != "" {
 			ttl, err := time.ParseDuration(msg.ttl)
