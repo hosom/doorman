@@ -36,7 +36,7 @@ type API struct {
 
 // NewAPI creates an API handler
 func NewAPI(ttl time.Duration) *API {
-	return API{ttlmap.NewTTLMap(ttl)}
+	return &API{ttlmap.NewTTLMap(ttl), ttl}
 }
 
 // ServeHTTP is a required method for handlers

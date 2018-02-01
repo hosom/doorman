@@ -9,6 +9,6 @@ import (
 
 func main() {
 	apiHandler := api.NewAPI(time.Hour * 1)
-	http.Handle("/blocklist", &apiHandler)
+	http.Handle("/blocklist", apiHandler)
 	http.ListenAndServe(":80", nil)
 }
