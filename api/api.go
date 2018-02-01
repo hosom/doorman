@@ -14,7 +14,8 @@ import (
 // message is an API message received from a client
 type message struct {
 	Indicator string
-	Ttl       string
+	TTL       string
+	Reason    string
 }
 
 // parseMessage accepts an HTTP request and returns a message
@@ -44,7 +45,6 @@ func NewAPI(ttl time.Duration) *API {
 
 // ServeHTTP is a required method for handlers
 func (a *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Received request.")
 	switch r.Method {
 	default:
 		http.Error(w, "", http.StatusNotImplemented)
@@ -56,26 +56,25 @@ func (a *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *API) get(w http.ResponseWriter, r *http.Request) {
-	log.Println("Processing request to retrieve blocklist.")
 	m := a.blocklist.GetAll()
 	var indicators []string
 	for indicator := range m {
-		indicators = append(indicators, indicator.(string))
+
+		indicators = append(indicators, fmt.Sprintf("%s,%s", indicator.(string), m[indicator].(message).Reason))
 	}
-	log.Printf("Found %d entries to return", len(indicators))
+	log.Printf("Request to retrieve blocklist returned %d results.", len(indicators))
 	response := strings.Join(indicators, "\n")
 
 	fmt.Fprint(w, response)
 }
 
 func (a *API) post(w http.ResponseWriter, r *http.Request) {
-	log.Println("Processing request to add to blocklist.")
 	msg, _ := parseMessage(r)
 	if msg != nil {
-		log.Printf("Processing indicator: %s, using ttl: %s", msg.Indicator, msg.Ttl)
+		log.Printf("indicator: %s, ttl: %s, reason: %s", msg.Indicator, msg.TTL, msg.Reason)
 		// if the message parses properly, process it
 		if msg.Indicator != "" {
-			ttl, err := time.ParseDuration(msg.Ttl)
+			ttl, err := time.ParseDuration(msg.TTL)
 			if err != nil {
 				ttl = a.ttl
 			}
