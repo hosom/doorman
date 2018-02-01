@@ -79,7 +79,7 @@ func (a *API) post(w http.ResponseWriter, r *http.Request) {
 				ttl = a.ttl
 			}
 
-			a.blocklist.AddWithTTL(msg.Indicator, msg, ttl)
+			a.blocklist.AddWithTTL(msg.Indicator, *msg, ttl)
 			fmt.Fprint(w, "OK")
 		}
 	} else {
