@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/hosom/ttlmap"
+	"github.com/hosom/go-ttlmap"
 )
 
 // message is an API message received from a client
