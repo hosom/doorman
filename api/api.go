@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -43,6 +44,7 @@ func NewAPI(ttl time.Duration) *API {
 
 // ServeHTTP is a required method for handlers
 func (a *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	log.Printf("Received request.")
 	switch r.Method {
 	default:
 		http.Error(w, "", http.StatusNotImplemented)
@@ -54,7 +56,7 @@ func (a *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *API) get(w http.ResponseWriter, r *http.Request) {
-
+	log.Println("Processing request to retrieve blocklist.")
 	m := a.blocklist.GetAll()
 	var indicators []string
 	for indicator := range m {
@@ -67,6 +69,7 @@ func (a *API) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *API) post(w http.ResponseWriter, r *http.Request) {
+	log.Println("Processing request to add to blocklist.")
 	msg, _ := parseMessage(r)
 	if msg != nil {
 		// if the message parses properly, process it
