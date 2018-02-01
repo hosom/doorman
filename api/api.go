@@ -13,8 +13,8 @@ import (
 
 // message is an API message received from a client
 type message struct {
-	indicator string
-	ttl       string
+	Indicator string
+	Ttl       string
 }
 
 // parseMessage accepts an HTTP request and returns a message
@@ -72,15 +72,15 @@ func (a *API) post(w http.ResponseWriter, r *http.Request) {
 	log.Println("Processing request to add to blocklist.")
 	msg, _ := parseMessage(r)
 	if msg != nil {
-		log.Printf("Processing indicator: %s, using ttl: %s", msg.indicator, msg.ttl)
+		log.Printf("Processing indicator: %s, using ttl: %s", msg.Indicator, msg.Ttl)
 		// if the message parses properly, process it
-		if msg.indicator != "" {
-			ttl, err := time.ParseDuration(msg.ttl)
+		if msg.Indicator != "" {
+			ttl, err := time.ParseDuration(msg.Ttl)
 			if err != nil {
 				ttl = a.ttl
 			}
 
-			a.blocklist.AddWithTTL(msg.indicator, msg, ttl)
+			a.blocklist.AddWithTTL(msg.Indicator, msg, ttl)
 			fmt.Fprint(w, "OK")
 		}
 	} else {
