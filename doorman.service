@@ -1,0 +1,13 @@
+[Unit]
+Description=Doorman blocklist manager
+After=network.target
+
+[Service]
+Type=simple
+User=nobody
+WorkingDirectory=/opt/doorman
+ExecStart=/opt/doorman/bin/doorman
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
