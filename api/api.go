@@ -56,6 +56,7 @@ func (a *API) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *API) get(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
 	m := a.blocklist.GetAll()
 	var indicators []string
 	for indicator := range m {
@@ -69,6 +70,7 @@ func (a *API) get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *API) post(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
 	msg, _ := parseMessage(r)
 	if msg != nil {
 		log.Printf("indicator: %s, ttl: %s, reason: %s", msg.Indicator, msg.TTL, msg.Reason)
