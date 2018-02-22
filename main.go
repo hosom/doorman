@@ -9,9 +9,21 @@ import (
 )
 
 func main() {
-	apiHandler := api.NewAPI(time.Hour * 1)
-	http.Handle("/blocklist", apiHandler)
-	if err := http.ListenAndServe(":8000", nil); err != nil {
+
+	apiHandler := api.NewAPI(1 * time.Hour)
+
+	servMux := http.NewServeMux()
+	servMux.Handle("/blocklist", apiHandler)
+
+	serv := &http.Server{
+		Addr:         ":8000",
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
+		IdleTimeout:  30 * time.Second,
+		Handler:      servMux,
+	}
+
+	if err := serv.ListenAndServe(); err != nil {
 		log.Fatal(err)
 	}
 }
